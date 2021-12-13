@@ -1,0 +1,23 @@
+#cloud-config
+users:
+  - name: vscdev
+    gecos: vscdev
+    shell: /bin/bash
+    sudo: False
+    groups: users
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+timezone: Europe/Berlin
+
+package_update: true
+
+packages:
+  - vim
+  - podman
+  - podman-compose
+
+runcmd:
+  - sed -i -e '$aalias docker=podman' /home/vscdev/.bashrc
+  - sed -i -e '$aalias docker-compose=podman-compose' /home/vscdev/.bashrc
