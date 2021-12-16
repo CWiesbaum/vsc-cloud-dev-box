@@ -1,5 +1,13 @@
 #cloud-config
 users:
+  - name: vscdev-admin
+    gecos: vscdev-admin
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${ssh_public_key}
   - name: vscdev
     gecos: vscdev
     shell: /bin/bash
@@ -15,9 +23,18 @@ package_update: true
 
 packages:
   - vim
+  - git
   - podman
   - podman-compose
+  - https://github.com/cdr/code-server/releases/download/v3.12.0/code-server-3.12.0-amd64.rpm
+  %{ if exposed == "true" }- nginx
+  - certbot
+  - python3-certbot-nginx
+  %{ endif }
 
 runcmd:
   - sed -i -e '$aalias docker=podman' /home/vscdev/.bashrc
   - sed -i -e '$aalias docker-compose=podman-compose' /home/vscdev/.bashrc
+
+power_state:
+  mode: reboot
